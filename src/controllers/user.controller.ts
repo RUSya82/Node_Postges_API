@@ -1,11 +1,10 @@
 import { BaseController } from './base.controller';
+import { IUserService } from '../core/user.service.interface';
 
 export class UserController extends BaseController {
-    userService;
 
-    constructor(userService) {
+    constructor(private userService: IUserService) {
         super();
-        this.userService = userService;
     }
 
     async createUser(req, res) {
@@ -29,7 +28,7 @@ export class UserController extends BaseController {
             if (!user.rowCount) {
                 throw new Error(`user with id = ${id} not found`);
             }
-            console.log(user.rows[0]);
+            console.log(user.rows);
             this.send(res, 200, user.rows[0]);
         } catch (e) {
             console.log(e.message);

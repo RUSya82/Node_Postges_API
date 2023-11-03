@@ -1,4 +1,4 @@
-export class BaseController {
+export abstract class BaseController {
     send(res, code, message) {
         res.type('application/json');
         return res.status(code).json(message);
