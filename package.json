@@ -2,11 +2,12 @@
   "name": "node_postges_api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "type": "module",
+  "main": "src/index.ts",
+  "type": "commonjs",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "start": "node dist/index.js",
+    "dev": "nodemon",
+    "build": "tcs"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +17,10 @@
     "pg": "^8.11.3"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "@types/express": "^4.17.19",
+    "@types/pg": "^8.10.7",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
   }
 }

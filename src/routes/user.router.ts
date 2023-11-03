@@ -1,8 +1,9 @@
 import { Router } from 'express';
-import { UserController } from '../controllers/user.controller.js';
+import { UserController } from '../controllers/user.controller';
+import {UserService} from '../services/user.service';
 
-const userRouter = new Router();
-const userController = new UserController();
+const userRouter =  Router();
+const userController = new UserController(new UserService());
 
 userRouter.post('/user', userController.createUser.bind(userController));
 userRouter.get('/user/:id', userController.getOneUser.bind(userController));

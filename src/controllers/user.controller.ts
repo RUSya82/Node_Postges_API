@@ -1,15 +1,16 @@
-import pool from '../db.js';
-import { BaseController } from './base.controller.js';
+import { BaseController } from './base.controller';
 
 export class UserController extends BaseController {
-    constructor() {
+    userService;
+
+    constructor(userService) {
         super();
+        this.userService = userService;
     }
 
     async createUser(req, res) {
-        const { name, surname } = req.body;
         try {
-            const newPerson = await pool.query('INSERT INTO person (name, surname) values ($1, $2) RETURNING *', [name, surname]);
+            const newPerson = await this.userService.create(req.body);
             if (!newPerson.rowCount) {
                 throw new Error(`User not created`);
             }
@@ -24,7 +25,7 @@ export class UserController extends BaseController {
     async deleteUser(req, res) {
         const id = req.params.id;
         try {
-            const user = await pool.query('DELETE FROM person WHERE id = $1 ', [id]);
+            const user = await this.userService.delete(id);
             if (!user.rowCount) {
                 throw new Error(`user with id = ${id} not found`);
             }
@@ -37,11 +38,10 @@ export class UserController extends BaseController {
     }
 
     async updateUser(req, res) {
-        const { id, name, surname } = req.body;
         try {
-            const user = await pool.query('UPDATE person set name = $1, surname = $2 where id = $3 RETURNING *', [name, surname, id]);
+            const user = await this.userService.update(req.body);
             if (!user.rowCount) {
-                throw new Error(`User with id = ${id} not found`);
+                throw new Error(`User not found`);
             }
             this.ok(res, user.rows[0]);
             console.log(user.rows[0]);
@@ -54,7 +54,7 @@ export class UserController extends BaseController {
     async getOneUser(req, res) {
         const id = req.params.id;
         try {
-            const user = await pool.query('SELECT * FROM person WHERE id = $1 ', [id]);
+            const user = await this.userService.getOne(id);
             if (!user.rowCount) {
                 throw new Error(`user with id = ${id} not found`);
             } else {
@@ -67,21 +67,26 @@ export class UserController extends BaseController {
         }
     }
 
-    async findUser(req, res){
-        const { id, name, surname } = req.body;
-        const users = await pool.query('SELECT * FROM person WHERE name = $1 OR surname = $2', [name, surname]);
-        console.log(users.rows[0]);
-        this.ok(res, users.rows);
+    async findUser(req, res) {
+        try {
+            const users = await this.userService.find(req.body);
+            console.log(users.rows);
+            await this.ok(res, users.rows);
+        } catch (e) {
+            console.log(e.message);
+            this.error(res, e.message);
+        }
+
     }
 
     async getAllUsers(req, res) {
-        try{
-            const users = await pool.query('SELECT * FROM person');
-            if(!users.rowCount){
+        try {
+            const users = await this.userService.getAll();
+            if (!users.rowCount) {
                 throw new Error(`No users in database`);
             }
-            this.ok(res, users.rows);
-        } catch (e){
+            await this.ok(res, users.rows);
+        } catch (e) {
             console.log(e.message);
             this.error(res, e.stack);
         }

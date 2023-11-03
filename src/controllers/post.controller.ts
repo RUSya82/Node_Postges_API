@@ -1,5 +1,5 @@
-import { BaseController } from './base.controller.js';
-import pool from '../db.js';
+import { BaseController } from './base.controller';
+import pool from '../db';
 
 export class PostController extends BaseController {
     constructor() {

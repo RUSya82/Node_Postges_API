@@ -1,3 +1,10 @@
 # Project exclude paths
 /node_modules/
 package-lock.json
+/.clinic/
+/dist
+/.env
+.idea
+*.iml
+out
+gen
