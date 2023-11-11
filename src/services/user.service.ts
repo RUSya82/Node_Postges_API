@@ -3,11 +3,15 @@ import { IUserService } from '../core/user.service.interface';
 import { CreateUserDto } from '../core/dto/createUser.dto';
 import { UpdateUserDto } from '../core/dto/updateUser.dto';
 import { FindUserDto } from '../core/dto/findUser.dto';
+import { User} from '../core/entity/user.entity';
 
 export class UserService implements IUserService{
     async create(user: CreateUserDto) {
-        const { name, surname, email } = user;
-        return await pool.query('INSERT INTO person (name, surname, email) values ($1, $2, $3) RETURNING *', [name, surname, email]);
+        const { name, surname, email, password } = user;
+        const newUser = new User(email, name, surname);
+        console.log(email, name, surname, password);
+        await newUser.setPassword(password, 10);
+        return await pool.query('INSERT INTO person (name, surname, email, password) values ($1, $2, $3, $4) RETURNING *', [newUser.name, newUser.surname, newUser.email, newUser.password]);
     }
 
     async delete(id: number) {
